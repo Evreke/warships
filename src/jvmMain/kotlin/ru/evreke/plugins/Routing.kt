@@ -15,6 +15,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import ru.evreke.Game
+import ru.evreke.initShips
 
 fun Application.configureRouting() {
 
@@ -30,7 +31,7 @@ fun Application.configureRouting() {
       send("echo from WS")
     }
     webSocket("/ws") {
-      val game = Game()
+      val game = Game().also { it.field.initShips() }
       sendSerialized(game.field)
     }
   }
