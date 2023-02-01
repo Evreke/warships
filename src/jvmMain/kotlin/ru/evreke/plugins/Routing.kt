@@ -7,14 +7,14 @@
 
 package ru.evreke.plugins
 
+import ActualPlayer
+import Game
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
-import io.ktor.websocket.*
-import ru.evreke.Game
 
 fun Application.configureRouting() {
 
@@ -26,12 +26,8 @@ fun Application.configureRouting() {
         ContentType.Text.Html
       )
     }
-    webSocket("/echo") {
-      send("echo from WS")
-    }
     webSocket("/ws") {
-      val game = Game()
-      sendSerialized(game.field)
+      sendSerialized(Game(ActualPlayer(9)).board)
     }
   }
   routing {

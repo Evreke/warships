@@ -5,92 +5,62 @@
  * Licensed under the Apache License 2.0
  */
 
-package ru.evreke
 
-import kotlin.random.Random
+class Game(private var currentPlayer: ActualPlayer) {
+    val board: Board
+    private val players = linkedSetOf<ActualPlayer>()
+    private val isStarted: Boolean = false
+    private var move: Int = 0
+    private val isWithBot: Boolean = true
 
-class Game {
-  var field: Field
-
-  init {
-    field = initField()
-  }
-
-  companion object {
-    private const val fieldSize = 10
-    private val positionResolver = PositionResolver()
-  }
-
-  private fun initField(): Field {
-    val list = mutableListOf<MutableList<Int?>>()
-    for (i in 0 until fieldSize) {
-      list.add(MutableList(fieldSize) { null })
-    }
-    return Field(fieldSize, list)
-  }
-
-  fun placeShip(coords: Coords, ship: Ship): Boolean {
-    // Checks before place
-    when {
-      isOutOfBounds(coords, ship) -> {
-        //TODO Implement answer to interpret
-        return false
-      }
-      hasProhibitedCellsOnPath(coords, ship) -> {
-        //TODO Implement answer to interpret
-        return false
-      }
-    }
-
-    return field.placeShip(coords, ship) {
-      positionResolver.resolvePosition(coords, fieldSize - 1)
-    }
-  }
-
-  private fun isOutOfBounds(coords: Coords, ship: Ship): Boolean = positionResolver.isOutOfBounds(coords, ship, fieldSize)
-
-  private fun hasProhibitedCellsOnPath(coords: Coords, ship: Ship): Boolean {
-    when (ship.direction) {
-      Direction.HORIZONTAL -> {
-        for (i in 0 until ship.size) {
-          if (field.field[coords.y][coords.x + i] == 1 || field.field[coords.y][coords.x + i] != null) {
-            println("cannot place ship. Prohibited position")
-            return true
-          }
+    init {
+        board = initField()
+        if (isWithBot) {
+            board.placeShipsForDemo()
         }
-        return false
-      }
-      Direction.VERTICAL -> {
-        for (i in 0 until ship.size) {
-          if (field.field[coords.y + i][coords.x] == 1 || field.field[coords.y + i][coords.x] != null) {
-            println("cannot place ship. Prohibited position")
-            return true
-          }
-        }
-        return false
-      }
     }
-  }
-}
 
-fun Field.initShips() {
-  val ships = mutableListOf(
-    SmallShip(direction = Direction.HORIZONTAL),
-    SmallShip(direction = Direction.HORIZONTAL),
-    SmallShip(direction = Direction.VERTICAL),
-    SmallShip(direction = Direction.HORIZONTAL),
-    MediumShip(direction = Direction.VERTICAL),
-    MediumShip(direction = Direction.HORIZONTAL),
-    BigShip(direction = Direction.VERTICAL),
-    BigShip(direction = Direction.HORIZONTAL),
-    HugeShip(direction = Direction.VERTICAL),
-  )
+    companion object {
+        private const val fieldSize = 10
+    }
 
-  for (i in 0 until ships.size) {
-    val x = Random.nextInt(0, size - 2)
-    val y = Random.nextInt(0, size - 2)
-    val shipToPlace = ships.removeAt(Random.nextInt(0, ships.size))
-    val coords = Coords(x, y)
-    placeShip(coords, shipToPlace) { PositionResolver().resolvePosition(coords, field.size - 1) }
-  }
+    fun incrementMove() {
+        move++
+    }
+
+    fun isGameOver() {
+        if (currentPlayer.shipsAmount == 0.toByte()) {
+            // TODO("Send game over signal")
+        }
+        // TODO("Handle game over")
+    }
+
+    fun switchPlayers() {
+        currentPlayer = players.indexOf(currentPlayer).let {
+            if (players.size == it) {
+                players.first()
+            } else {
+                players.elementAt(it + 1)
+            }
+        }
+    }
+
+    fun handleShot(coords: Coords) {
+        if (isShotPossible(coords)) {
+            board.field[coords.y][coords.x] = FieldConstants.WRECKED
+        } else {
+            TODO("Handle wrong move")
+        }
+    }
+
+    fun isShotPossible(coords: Coords): Boolean = board.field[coords.y][coords.x]
+        .let { it != FieldConstants.PROHIBITED || it != FieldConstants.EMPTY }
+
+    private fun initField(): Board {
+        val list = mutableListOf<MutableList<Int>>()
+        for (i in 0 until fieldSize) {
+            list.add(MutableList(fieldSize) { FieldConstants.EMPTY })
+        }
+        return Board(fieldSize, list)
+    }
 }
