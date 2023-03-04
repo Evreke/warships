@@ -5,8 +5,6 @@
  * Licensed under the Apache License 2.0
  */
 
-package ru.evreke
-
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -18,22 +16,22 @@ sealed class Ship(
 class SmallShip(
   size: Int = 1,
   direction: Direction
-) : Ship(size, direction) {}
+) : Ship(size, direction)
 
 class MediumShip(
   size: Int = 2,
   direction: Direction
-) : Ship(size, direction) {}
+) : Ship(size, direction)
 
 class BigShip(
   size: Int = 3,
   direction: Direction
-) : Ship(size, direction) {}
+) : Ship(size, direction)
 
 class HugeShip(
   size: Int = 4,
   direction: Direction
-) : Ship(size, direction) {}
+) : Ship(size, direction)
 
 enum class Direction {
   HORIZONTAL,

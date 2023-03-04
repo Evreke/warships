@@ -5,9 +5,6 @@
  * Licensed under the Apache License 2.0
  */
 
-package ru.evreke
-
-
 class PositionResolver {
 
   fun resolvePosition(coords: Coords, fieldSize: Int): Position = when {
@@ -31,19 +28,6 @@ class PositionResolver {
           || coords.x == fieldSize
           || coords.y == 0
           || coords.y == fieldSize
-
-  fun detectEdge(coords: Coords, fieldSize: Int): Edges = when {
-    coords.x == 0 -> Edges.LEFT
-    coords.x == fieldSize -> Edges.RIGHT
-    coords.y == 0 -> Edges.TOP
-    coords.y == fieldSize -> Edges.BOTTOM
-    else -> throw IllegalStateException("Inappropriate method call")
-  }
-
-  fun isOutOfBounds(coords: Coords, ship: Ship, fieldSize: Int): Boolean = when (ship.direction) {
-    Direction.HORIZONTAL -> coords.x + ship.size > fieldSize
-    Direction.VERTICAL -> coords.y + ship.size > fieldSize
-  }
 }
 
 enum class Position {

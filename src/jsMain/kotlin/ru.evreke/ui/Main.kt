@@ -7,6 +7,8 @@
 
 package ru.evreke.ui
 
+import Board
+import FieldConstants
 import androidx.compose.runtime.mutableStateOf
 import client
 import io.ktor.client.plugins.websocket.*
@@ -18,7 +20,6 @@ import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.H1
 import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.renderComposable
-import ru.evreke.Field
 import ru.evreke.ui.style.AppStylesheet
 
 val scope = MainScope()
@@ -26,7 +27,7 @@ val scope = MainScope()
 fun main() {
   renderComposable(rootElementId = "root") {
     Style(AppStylesheet)
-    val field = mutableStateOf<Field?>(null)
+    val board = mutableStateOf<Board?>(null)
 
     H1 {
       Text("Warships")
@@ -39,7 +40,8 @@ fun main() {
         port = 8080,
         path = "/ws"
       ) {
-        field.value = receiveDeserialized()
+        board.value = receiveDeserialized()
+        console.log(board.value)
       }
     }
 
@@ -47,18 +49,16 @@ fun main() {
     Div(
       attrs = { classes(AppStylesheet.fieldContainer) }
     ) {
-      field.value?.field?.mapIndexed { y, row ->
+      board.value?.field?.mapIndexed { y, row ->
         row.mapIndexed { x, cell ->
           Div({
             classes(AppStylesheet.fieldCell)
             attr("data-x", x.toString())
             attr("data-y", y.toString())
           }) {
-            cell?.let {
-              if (it == 1) {
+            cell.let {
+              if (it != FieldConstants.EMPTY) {
                 Text(cell.toString())
-              } else {
-                Text("S")
               }
             }
           }
