@@ -7,6 +7,7 @@
 
 package ru.evreke
 
+import Game
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.*
 import io.ktor.serialization.kotlinx.json.*
@@ -36,9 +37,6 @@ fun Application.myApplicationModule() {
     }
     install(Compression) {
         gzip()
-    }
-    install(WebSockets) {
-        contentConverter = KotlinxWebsocketSerializationConverter(Json)
     }
     configureRouting()
 }

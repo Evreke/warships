@@ -1,3 +1,5 @@
+import io.ktor.websocket.*
+
 /*
  * Copyright (c) 2019-2022. Alexey Antipin and others.
  * https://github.com/Evreke/warships
@@ -9,6 +11,7 @@
 class Game(private var currentPlayer: ActualPlayer) {
     val board: Board
     private val players = linkedSetOf<ActualPlayer>()
+    val sessions = mutableListOf<WebSocketSession>()
     private val isStarted: Boolean = false
     private var move: Int = 0
     private val isWithBot: Boolean = true
